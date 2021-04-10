@@ -35,18 +35,24 @@ moon.position.x = 10;
 earth.add(moon);
 scene.add(earth);
 
-// Directional light
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
-directionalLight.position.x = -3;
-directionalLight.position.y = 3;
-directionalLight.position.z = 3;
-scene.add(directionalLight);
+// Spot light
+const spotLight = new THREE.SpotLight(0xffffff, 1.0);
+spotLight.position.x = -3;
+spotLight.position.y = 3;
+spotLight.position.z = 3;
+spotLight.castShadow = true;
+// Add a little sphere to visualize spotLight position
+const lightSphere = getSphere(0.3, 24, 24);
+spotLight.add(lightSphere);
+scene.add(spotLight);
+
 // dat.gui for ease of control
 const gui = new dat.GUI();
-gui.add(directionalLight, 'intensity', 0, 10);
-gui.add(directionalLight.position, 'x', -3, 3);
-gui.add(directionalLight.position, 'y', -3, 3);
-gui.add(directionalLight.position, 'z', -3, 3);
+
+gui.add(spotLight, 'intensity', 0, 10);
+gui.add(spotLight.position, 'x', -3, 3);
+gui.add(spotLight.position, 'y', -3, 3);
+gui.add(spotLight.position, 'z', -3, 3);
 
 camera.position.z = 15;
 function render() {
@@ -55,6 +61,15 @@ function render() {
   earth.rotation.y += 0.005;
 
   renderer.render(scene, camera);
+}
+
+function getSphere(radius: number, wSegs: number, hSegs: number) {
+  const geometry = new THREE.SphereGeometry(radius, wSegs, hSegs);
+  const material = new THREE.MeshBasicMaterial({
+    color: 'rgb(255, 255, 0)'
+  });
+  const mesh = new THREE.Mesh(geometry, material);
+  return mesh;
 }
 
 render();
