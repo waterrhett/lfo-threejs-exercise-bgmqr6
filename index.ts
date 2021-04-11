@@ -35,6 +35,7 @@ const moonMaterial = new THREE.MeshBasicMaterial();
 const moon = new THREE.Mesh(geometry, moonMaterial);
 moon.scale.set(0.2, 0.2, 0.2);
 moon.position.x = 10;
+moon.castShadow = true;
 
 earth.add(moon);
 scene.add(earth);
@@ -55,25 +56,21 @@ scene.add(spotLight);
 // Occluding sphere for eclipse
 const occludingSphere = getSphere(0.25, 24, 24,);
 occludingSphere.castShadow = true;
-occludingSphere.material.color.setHex( 0xffffff );
-// const ray = new THREE.Vector3( 
-//   earth.position.x-spotLight.position.x, 
-//   earth.position.y-spotLight.position.y, 
-//   earth.position.z-spotLight.position.z 
-// );
+occludingSphere.material.color.setHex( 0x000000 );
+
 const ray = new THREE.Vector3();
 ray.subVectors(earth.position, spotLight.position);
 ray.normalize();
 occludingSphere.position.set(
-  spotLight.position.x + 1, 
+  spotLight.position.x + 0.1, 
   spotLight.position.y,
   spotLight.position.z);
 // occludingSphere.position.addScaledVector(ray, 0.1);
 
 spotLightGroup.add(spotLight);
 spotLightGroup.add(occludingSphere);
-spotLightGroup.position.x = -5;
-spotLightGroup.position.y = 5;
+spotLightGroup.position.x = -6;
+spotLightGroup.position.y = -3;
 spotLightGroup.position.z = 5;
 spotLightGroup.position.addScaledVector(ray, 0.1);
 
@@ -81,9 +78,6 @@ scene.add(spotLightGroup);
 const axesHelper = new THREE.AxesHelper( 5 );
 scene.add(axesHelper);
 const controls = new OrbitControls(camera, renderer.domElement);
-
-// scene.add(occludingSphere);
-
 
 // dat.gui for ease of control
 const gui = new dat.GUI();
@@ -97,8 +91,6 @@ gui.add(spotLightGroup.position, 'z', -10, 10);
 // gui.add(spotLight.position, 'z', -10, 10);
 
 camera.position.z = 15;
-
-// const controls = new THREE.OrbitControls(camera, renderer.domElement);
 function render() {
   requestAnimationFrame(render);
 
