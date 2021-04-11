@@ -1,5 +1,6 @@
 import * as THREE from "three";
-import * as dat from 'dat.gui';
+import * as dat from "dat.gui";
+import OrbitControls from "three-orbitcontrols";
 
 const width = 700;
 const height = 500;
@@ -77,6 +78,9 @@ spotLightGroup.position.z = 5;
 spotLightGroup.position.addScaledVector(ray, 0.1);
 
 scene.add(spotLightGroup);
+const axesHelper = new THREE.AxesHelper( 5 );
+scene.add(axesHelper);
+const controls = new OrbitControls(camera, renderer.domElement);
 
 // scene.add(occludingSphere);
 
