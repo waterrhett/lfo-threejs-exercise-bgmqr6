@@ -116,8 +116,8 @@ function udateSpaceship() {
   const dist2earth = spaceship.position.distanceTo(earth.position);
   const dist2moon = spaceship.position.distanceTo(moon.position);
   // Collision detection
-  if (dist2earth < (sphereRadius*earth.scale.x + coneHeight) || 
-     (dist2moon < (sphereRadius*moon.scale.x + coneHeight))) {
+  if (dist2earth < (sphereRadius*earth.scale.x + coneHeight*spaceship.scale.x) || 
+     (dist2moon < (sphereRadius*moon.scale.x + coneHeight*spaceship.scale.x))) {
     // spaceship.visible = false;
     // console.log("Crashed!");
   }
