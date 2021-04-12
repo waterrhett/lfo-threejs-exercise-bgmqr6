@@ -37,7 +37,15 @@ moon.scale.set(0.2, 0.2, 0.2);
 moon.position.x = 10;
 moon.castShadow = true;
 
+// Add satellite that revolves around the moon
+const satelliteMaterial = new THREE.MeshBasicMaterial();
+const satellite = new THREE.Mesh(geometry, satelliteMaterial);
+satellite.scale.set(0.4, 0.4, 0.4);
+satellite.position.x = 10;
+satellite.castShadow = true;
+
 earth.add(moon);
+moon.add(satellite);
 scene.add(earth);
 
 // Spot light
@@ -89,12 +97,22 @@ gui.add(spotLightGroup.position, 'z', -10, 10);
 // gui.add(spotLight.position, 'x', -5, 5);
 // gui.add(spotLight.position, 'y', -5, 5);
 // gui.add(spotLight.position, 'z', -10, 10);
+// gui button for outputing satellite's position
+const positionButton = { relativePosition:function(){ 
+  var relativePosition = new THREE.Vector3();
+  satellite.getWorldPosition(relativePosition);
+  earth.worldToLocal(relativePosition);
+  console.log(relativePosition);
+}};
+gui.add(positionButton,'relativePosition');
+
 
 camera.position.z = 15;
 function render() {
   requestAnimationFrame(render);
 
   earth.rotation.y += 0.005;
+  moon.rotation.z += 0.02;
 
   renderer.render(scene, camera);
 }
