@@ -14,8 +14,9 @@ renderer.shadowMap.enabled = true;
 renderer.setSize(width, height);
 document.body.appendChild(renderer.domElement);
 
+const sphereRadius = 3;
 const geometry = new THREE.SphereGeometry(
-  3,
+  sphereRadius,
   50,
   50,
   0,
@@ -109,12 +110,17 @@ function render() {
 }
 
 function udateSpaceship() {
-  spaceship.rotateZ(Math.random() * 0.02);
+  // spaceship.rotateZ(0.2 * Math.random());
   spaceship.rotateX(Math.random() * 0.02);
-  spaceship.translateY(0.03);
+  spaceship.translateY(0.03 * Math.random());
   const dist2earth = spaceship.position.distanceTo(earth.position);
   const dist2moon = spaceship.position.distanceTo(moon.position);
-  // if (dist2eart < earth.geometry.radiu)
+  // Collision detection
+  if (dist2earth < (sphereRadius*earth.scale.x + coneHeight) || 
+     (dist2moon < (sphereRadius*moon.scale.x + coneHeight))) {
+    // spaceship.visible = false;
+    // console.log("Crashed!");
+  }
 }
 
 function getSphere(radius: number, wSegs: number, hSegs: number) {
