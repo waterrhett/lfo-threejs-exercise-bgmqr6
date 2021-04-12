@@ -25,7 +25,7 @@ const geometry = new THREE.SphereGeometry(
 );
 
 // const earthMaterial = new THREE.MeshNormalMaterial({ wireframe: true });
-const earthMaterial = new THREE.MeshPhongMaterial({color: 0x0000ff});
+const earthMaterial = new THREE.MeshPhongMaterial({ color: 0x0000ff });
 const earth = new THREE.Mesh(geometry, earthMaterial);
 earth.position.x = 5;
 earth.rotation.x = (23.4 / 180) * Math.PI;
@@ -49,63 +49,39 @@ moon.add(satellite);
 scene.add(earth);
 
 // Spot light
-const spotLightGroup = new THREE.Group();
-
 const spotLight = new THREE.SpotLight(0xffffff, 1.0);
-// spotLight.position.x = -5;
-// spotLight.position.y = 5;
-// spotLight.position.z = 5;
+spotLight.position.x = -6;
+spotLight.position.y = -3;
+spotLight.position.z = 5;
+// Allow for eclipse
 spotLight.castShadow = true;
 // Add a little sphere to visualize spotLight position
 const lightSphere = getSphere(0.3, 24, 24);
 spotLight.add(lightSphere);
 scene.add(spotLight);
 
-// Occluding sphere for eclipse
-const occludingSphere = getSphere(0.25, 24, 24,);
-occludingSphere.castShadow = true;
-occludingSphere.material.color.setHex( 0x000000 );
-
-const ray = new THREE.Vector3();
-ray.subVectors(earth.position, spotLight.position);
-ray.normalize();
-occludingSphere.position.set(
-  spotLight.position.x + 0.1, 
-  spotLight.position.y,
-  spotLight.position.z);
-// occludingSphere.position.addScaledVector(ray, 0.1);
-
-spotLightGroup.add(spotLight);
-spotLightGroup.add(occludingSphere);
-spotLightGroup.position.x = -6;
-spotLightGroup.position.y = -3;
-spotLightGroup.position.z = 5;
-spotLightGroup.position.addScaledVector(ray, 0.1);
-
-scene.add(spotLightGroup);
-const axesHelper = new THREE.AxesHelper( 5 );
+scene.add(spotLight);
+const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
 const controls = new OrbitControls(camera, renderer.domElement);
 
-// dat.gui for ease of control
+// dat.gui
 const gui = new dat.GUI();
 
-gui.add(spotLight, 'intensity', 0, 10);
-gui.add(spotLightGroup.position, 'x', -5, 5);
-gui.add(spotLightGroup.position, 'y', -5, 5);
-gui.add(spotLightGroup.position, 'z', -10, 10);
-// gui.add(spotLight.position, 'x', -5, 5);
-// gui.add(spotLight.position, 'y', -5, 5);
-// gui.add(spotLight.position, 'z', -10, 10);
+gui.add(spotLight, "intensity", 0, 10);
+gui.add(spotLight.position, "x", -5, 5);
+gui.add(spotLight.position, "y", -5, 5);
+gui.add(spotLight.position, "z", -10, 10);
 // gui button for outputing satellite's position
-const positionButton = { relativePosition:function(){ 
-  var relativePosition = new THREE.Vector3();
-  satellite.getWorldPosition(relativePosition);
-  earth.worldToLocal(relativePosition);
-  console.log(relativePosition);
-}};
-gui.add(positionButton,'relativePosition');
-
+const positionButton = {
+  relativePosition: function() {
+    var relativePosition = new THREE.Vector3();
+    satellite.getWorldPosition(relativePosition);
+    earth.worldToLocal(relativePosition);
+    console.log(relativePosition);
+  }
+};
+gui.add(positionButton, "relativePosition");
 
 camera.position.z = 15;
 function render() {
@@ -120,7 +96,7 @@ function render() {
 function getSphere(radius: number, wSegs: number, hSegs: number) {
   const geometry = new THREE.SphereGeometry(radius, wSegs, hSegs);
   const material = new THREE.MeshBasicMaterial({
-    color: 'rgb(255, 255, 0)'
+    color: "rgb(255, 255, 0)"
   });
   const mesh = new THREE.Mesh(geometry, material);
   return mesh;
