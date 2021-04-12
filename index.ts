@@ -65,6 +65,20 @@ const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
 const controls = new OrbitControls(camera, renderer.domElement);
 
+// Spaceship
+const coneHeight = 0.5;
+const coneRadius = 0.2;
+const coneGeometry = new THREE.ConeGeometry( coneRadius, coneHeight, 10 );
+const coneMaterial = new THREE.MeshBasicMaterial( {color: 0xff0000} );
+const spaceship = new THREE.Mesh( coneGeometry, coneMaterial );
+
+// spaceship.lookAt(spotLight.position);
+spaceship.rotateZ(Math.PI/2);
+spaceship.position.x = 1;
+
+console.log(spaceship.up);
+scene.add(spaceship);
+
 // dat.gui
 const gui = new dat.GUI();
 
@@ -90,7 +104,17 @@ function render() {
   earth.rotation.y += 0.005;
   moon.rotation.z += 0.02;
 
+  udateSpaceship();
   renderer.render(scene, camera);
+}
+
+function udateSpaceship() {
+  spaceship.rotateZ(Math.random() * 0.02);
+  spaceship.rotateX(Math.random() * 0.02);
+  spaceship.translateY(0.03);
+  const dist2earth = spaceship.position.distanceTo(earth.position);
+  const dist2moon = spaceship.position.distanceTo(moon.position);
+  // if (dist2eart < earth.geometry.radiu)
 }
 
 function getSphere(radius: number, wSegs: number, hSegs: number) {
