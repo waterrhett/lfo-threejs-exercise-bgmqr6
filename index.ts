@@ -110,9 +110,13 @@ function render() {
 }
 
 function udateSpaceship() {
-  spaceship.rotateZ(0.002 * Math.random());
-  spaceship.rotateX(0.006* Math.random());
-  spaceship.translateY(0.02);
+  let radianMax = Math.PI;
+  let radianMin = -Math.PI;
+  let randRotatZ = Math.random() * (radianMax - radianMin) + radianMin;
+  let randRotatX = Math.random() * (radianMax - radianMin) + radianMin;
+  spaceship.rotateZ(0.01 * randRotatZ);
+  spaceship.rotateX(0.01* randRotatX);
+  spaceship.translateY(0.015);
   const dist2earth = spaceship.position.distanceTo(earth.position);
   const dist2moon = spaceship.position.distanceTo(moon.position);
   // Collision detection
@@ -120,6 +124,10 @@ function udateSpaceship() {
      (dist2moon < (sphereRadius*moon.scale.x + coneHeight*spaceship.scale.x))) {
     // spaceship.visible = false;
     console.log("Crashed!");
+  }
+  // Just so it dosn't wander to infinity
+  if (dist2earth > 15) {
+    spaceship.position.set(1, 0, 0);
   }
 }
 
