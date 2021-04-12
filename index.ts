@@ -49,7 +49,7 @@ moon.add(satellite);
 scene.add(earth);
 
 // Spot light
-const spotLight = new THREE.SpotLight(0xffffff, 1.0);
+const spotLight = new THREE.SpotLight(0xffffff, 2.0);
 spotLight.position.x = -6;
 spotLight.position.y = -3;
 spotLight.position.z = 5;
