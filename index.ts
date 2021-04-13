@@ -72,10 +72,19 @@ const coneRadius = 0.2;
 const coneGeometry = new THREE.ConeGeometry( coneRadius, coneHeight, 10 );
 const coneMaterial = new THREE.MeshBasicMaterial( {color: 0xff0000} );
 const spaceship = new THREE.Mesh( coneGeometry, coneMaterial );
+const spaceShipSpeed = 0.1;
 
 // spaceship.lookAt(spotLight.position);
-spaceship.rotateZ(Math.PI/2);
-spaceship.position.x = 1;
+// spaceship.rotateZ(Math.PI/2);
+// Initial speed is tangential to the earth
+// spaceship.rotateX(Math.PI/2);
+// Or equivalently: rotate (0, 1, 0) to (0, 0, 1)
+var initQuat = new THREE.Quaternion();
+initQuat.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 1));
+spaceship.setRotationFromQuaternion(initQuat);
+
+
+spaceship.position.x = -20;
 
 console.log(spaceship.up);
 scene.add(spaceship);
@@ -114,9 +123,11 @@ function udateSpaceship() {
   let radianMin = -Math.PI;
   let randRotatZ = Math.random() * (radianMax - radianMin) + radianMin;
   let randRotatX = Math.random() * (radianMax - radianMin) + radianMin;
-  spaceship.rotateZ(0.01 * randRotatZ);
-  spaceship.rotateX(0.01* randRotatX);
-  spaceship.translateY(0.015);
+
+  udpateSpaceShipRotation();
+  // spaceship.rotateZ(0.01 * randRotatZ);
+  // spaceship.rotateX(0.01* randRotatX);
+  spaceship.translateY(spaceShipSpeed);
   const dist2earth = spaceship.position.distanceTo(earth.position);
   const dist2moon = spaceship.position.distanceTo(moon.position);
   // Collision detection
@@ -129,6 +140,33 @@ function udateSpaceship() {
   if (dist2earth > 15) {
     spaceship.position.set(1, 0, 0);
   }
+}
+
+function udpateSpaceShipRotation() {
+  let spaceshipPosition = new THREE.Vector3();
+  spaceship.getWorldPosition(spaceshipPosition);
+
+  let spaceship2earth = new THREE.Vector3();
+  earth.getWorldPosition(spaceship2earth);
+  spaceship2earth.sub(spaceshipPosition);
+
+  let spaceship2moon = new THREE.Vector3();
+  moon.getWorldPosition(spaceship2moon);
+  spaceship2moon.sub(spaceshipPosition);
+
+  let forceDir = new THREE.Vector3();
+  forceDir.addScaledVector(spaceship2earth, 0.003);
+  forceDir.addScaledVector(spaceship2moon, 0.03);
+  forceDir.normalize();
+
+  // local (0, 1, 0) --> world vec
+  let spaceshipWorldDir = new THREE.Vector3(0, 1, 0);
+  spaceship.localToWorld(spaceshipWorldDir);
+  spaceshipWorldDir.normalize();
+  let quat = new THREE.Quaternion();
+  quat.setFromUnitVectors(spaceshipWorldDir, forceDir);
+
+  spaceship.quaternion.slerp(quat, 0.1);
 }
 
 function getSphere(radius: number, wSegs: number, hSegs: number) {
