@@ -99,7 +99,7 @@ spotLightGUI.add(spotLight, "intensity", 0, 10);
 spotLightGUI.add(spotLight.position, "x", -5, 5);
 spotLightGUI.add(spotLight.position, "y", -5, 5);
 spotLightGUI.add(spotLight.position, "z", -10, 10);
-// gui button for outputing satellite's position
+// Button for outputing satellite's position
 var satelliteGUI = gui.addFolder('Satellite');
 const positionButton = {
   relativePosition: function() {
