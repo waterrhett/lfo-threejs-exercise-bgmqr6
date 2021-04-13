@@ -113,7 +113,13 @@ satelliteGUI.add(positionButton, "relativePosition");
 satelliteGUI.open();
 
 var spaceshipGUI = gui.addFolder('SpaceShip');
-spaceshipGUI.add(options, 'allowExplosion');
+var allowExplosionController = spaceshipGUI.add(options, 'allowExplosion').listen();
+allowExplosionController.onChange(
+  function(newValue) {
+    if (!newValue) {
+      spaceship.visible = true;
+    }
+  });
 spaceshipGUI.open();
 
 camera.position.z = 15;
