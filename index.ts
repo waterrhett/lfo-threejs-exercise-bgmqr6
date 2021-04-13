@@ -134,8 +134,9 @@ function udateSpaceship() {
   if (dist2earth < (sphereRadius*earth.scale.x + coneHeight*spaceship.scale.x) || 
      (dist2moon < (sphereRadius*moon.scale.x + coneHeight*spaceship.scale.x))) {
     // spaceship.visible = false;
-    console.log("Crashed!");
+    // console.log("Crashed!");
   }
+  // avoidCollision();
   // Just so it dosn't wander to infinity
   if (dist2earth > 15) {
     spaceship.position.set(1, 0, 0);
@@ -167,6 +168,46 @@ function udpateSpaceShipRotation() {
   quat.setFromUnitVectors(spaceshipWorldDir, forceDir);
 
   spaceship.quaternion.slerp(quat, 0.1);
+}
+
+function avoidCollision() {
+  const seeAhead = 5;
+  let worldDir = new THREE.Vector3(0, 1, 0);
+  spaceship.localToWorld(worldDir);
+  let scaledWorldDir = new THREE.Vector3();
+  scaledWorldDir.addScaledVector(worldDir, seeAhead);
+
+  let ahead = new THREE.Vector3();
+  ahead.addVectors(spaceship.position, scaledWorldDir);
+
+  const aheadDist2earth = ahead.distanceTo(earth.position);
+  const aheadDist2moon = ahead.distanceTo(moon.position);
+
+  const forceScale = 100;
+  let unitForce = new THREE.Vector3();
+  if (aheadDist2earth < aheadDist2moon) {
+    if (aheadDist2earth < (sphereRadius*earth.scale.x + coneHeight*spaceship.scale.x)) {
+      unitForce.setX(ahead.x - earth.position.x);
+      unitForce.setY(ahead.y - earth.position.y);
+      unitForce.setZ(ahead.z - earth.position.z);
+      unitForce.normalize();
+    }
+  }
+  else {
+      if (aheadDist2moon < (sphereRadius*moon.scale.x + coneHeight*spaceship.scale.x)) {
+        unitForce.setX(ahead.x - moon.position.x);
+        unitForce.setY(ahead.y - moon.position.y);
+        unitForce.setZ(ahead.z - moon.position.z);
+        unitForce.normalize();
+    }
+  }
+
+  let spaceshipWorldDir = new THREE.Vector3(0, 1, 0);
+  spaceship.localToWorld(spaceshipWorldDir);
+  spaceshipWorldDir.normalize();
+  let quat = new THREE.Quaternion();
+  quat.setFromUnitVectors(spaceshipWorldDir, unitForce);
+  spaceship.quaternion.slerp(quat, 1);
 }
 
 function getSphere(radius: number, wSegs: number, hSegs: number) {
