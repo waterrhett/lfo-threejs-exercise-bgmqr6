@@ -75,8 +75,6 @@ const spaceship = new THREE.Mesh( coneGeometry, coneMaterial );
 const spaceShipSpeed = 0.1;
 var allowExplosion = false;
 
-// spaceship.lookAt(spotLight.position);
-// spaceship.rotateZ(Math.PI/2);
 // Initial speed is tangential to the earth
 // spaceship.rotateX(Math.PI/2);
 // Or equivalently: rotate (0, 1, 0) to (0, 0, 1)
@@ -88,21 +86,19 @@ spaceship.position.x = -20;
 scene.add(spaceship);
 
 var options = {
-  allowExplosion: false
+  allowExplosion: false,
 };
 
 // dat.gui
 const gui = new dat.GUI();
 var axesGUI = gui.addFolder('Axes');
 axesGUI.add(axesHelper, 'visible');
-axesGUI.open();
 
 var spotLightGUI = gui.addFolder('SpotLight');
 spotLightGUI.add(spotLight, "intensity", 0, 10);
 spotLightGUI.add(spotLight.position, "x", -5, 5);
 spotLightGUI.add(spotLight.position, "y", -5, 5);
 spotLightGUI.add(spotLight.position, "z", -10, 10);
-spotLightGUI.open();
 // gui button for outputing satellite's position
 var satelliteGUI = gui.addFolder('Satellite');
 const positionButton = {
