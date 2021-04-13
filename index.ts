@@ -73,6 +73,7 @@ const coneGeometry = new THREE.ConeGeometry( coneRadius, coneHeight, 10 );
 const coneMaterial = new THREE.MeshBasicMaterial( {color: 0xff0000} );
 const spaceship = new THREE.Mesh( coneGeometry, coneMaterial );
 const spaceShipSpeed = 0.1;
+var allowExplosion = false;
 
 // spaceship.lookAt(spotLight.position);
 // spaceship.rotateZ(Math.PI/2);
@@ -82,21 +83,28 @@ const spaceShipSpeed = 0.1;
 var initQuat = new THREE.Quaternion();
 initQuat.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 1));
 spaceship.setRotationFromQuaternion(initQuat);
-
-
 spaceship.position.x = -20;
 
-console.log(spaceship.up);
 scene.add(spaceship);
+
+var options = {
+  allowExplosion: false
+};
 
 // dat.gui
 const gui = new dat.GUI();
+var axesGUI = gui.addFolder('Axes');
+axesGUI.add(axesHelper, 'visible');
+axesGUI.open();
 
-gui.add(spotLight, "intensity", 0, 10);
-gui.add(spotLight.position, "x", -5, 5);
-gui.add(spotLight.position, "y", -5, 5);
-gui.add(spotLight.position, "z", -10, 10);
+var spotLightGUI = gui.addFolder('SpotLight');
+spotLightGUI.add(spotLight, "intensity", 0, 10);
+spotLightGUI.add(spotLight.position, "x", -5, 5);
+spotLightGUI.add(spotLight.position, "y", -5, 5);
+spotLightGUI.add(spotLight.position, "z", -10, 10);
+spotLightGUI.open();
 // gui button for outputing satellite's position
+var satelliteGUI = gui.addFolder('Satellite');
 const positionButton = {
   relativePosition: function() {
     var relativePosition = new THREE.Vector3();
@@ -105,7 +113,12 @@ const positionButton = {
     console.log(relativePosition);
   }
 };
-gui.add(positionButton, "relativePosition");
+satelliteGUI.add(positionButton, "relativePosition");
+satelliteGUI.open();
+
+var spaceshipGUI = gui.addFolder('SpaceShip');
+spaceshipGUI.add(options, 'allowExplosion');
+spaceshipGUI.open();
 
 camera.position.z = 15;
 function render() {
@@ -119,22 +132,16 @@ function render() {
 }
 
 function udateSpaceship() {
-  let radianMax = Math.PI;
-  let radianMin = -Math.PI;
-  let randRotatZ = Math.random() * (radianMax - radianMin) + radianMin;
-  let randRotatX = Math.random() * (radianMax - radianMin) + radianMin;
-
   udpateSpaceShipRotation();
-  // spaceship.rotateZ(0.01 * randRotatZ);
-  // spaceship.rotateX(0.01* randRotatX);
   spaceship.translateY(spaceShipSpeed);
   const dist2earth = spaceship.position.distanceTo(earth.position);
   const dist2moon = spaceship.position.distanceTo(moon.position);
   // Collision detection
-  if (dist2earth < (sphereRadius*earth.scale.x + coneHeight*spaceship.scale.x) || 
-     (dist2moon < (sphereRadius*moon.scale.x + coneHeight*spaceship.scale.x))) {
-    // spaceship.visible = false;
-    // console.log("Crashed!");
+  if (options.allowExplosion &&
+      dist2earth < (sphereRadius*earth.scale.x + coneHeight*spaceship.scale.x) || 
+      (dist2moon < (sphereRadius*moon.scale.x + coneHeight*spaceship.scale.x))) {
+    spaceship.visible = false;
+    console.log("Crashed!");
   }
   // avoidCollision();
   // Just so it dosn't wander to infinity
