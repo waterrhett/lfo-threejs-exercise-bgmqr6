@@ -115,7 +115,7 @@ satelliteGUI.open();
 var spaceshipGUI = gui.addFolder('SpaceShip');
 var allowExplosionController = spaceshipGUI.add(options, 'allowExplosion').listen();
 allowExplosionController.onChange(
-  function(newValue) {
+  function(newValue: boolean) {
     if (!newValue) {
       spaceship.visible = true;
     }
@@ -179,6 +179,7 @@ function udpateSpaceShipRotation() {
   spaceship.quaternion.slerp(quat, 0.1);
 }
 
+// @todo: not working properly, and reeks of duplicates
 function avoidCollision() {
   const seeAhead = 5;
   let worldDir = new THREE.Vector3(0, 1, 0);
